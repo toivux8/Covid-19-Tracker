@@ -4,7 +4,6 @@ import { FormControl, FormHelperText, InputLabel, NativeSelect } from '@material
 export default function CountrySelection({value, handleOnChangeCountry, countries}) {
     return (
         <div>
-            <h3>Select country for Covid case</h3>
             <FormControl>
                 <InputLabel htmlFor = "" shrink>Country</InputLabel>
                 <NativeSelect
