@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { getCountries, getReportByCountry } from "./api";
+import { getCountries, getReportByCountry } from "./components/api";
 import CountrySelection from "./components/CountrySelection";
 import Highlights from "./components/Highlights";
 import Summary from "./components/Summary";
+import {sortBy} from 'lodash'
+import { Typography, Container } from "@material-ui/core";
+import moment from "moment";
+
 
 function App() {
 
@@ -11,8 +15,10 @@ function App() {
   const [report, setReport] = useState([]);
 
   useEffect(() => {
-    getCountries().then(res =>{
-        setCountries(res.data);
+    getCountries().then((res) =>{
+
+      const countries = sortBy(res.data, 'Country');
+        setCountries(countries);
 
         //Default for country VN
         setSelectedCountryId('vn');
@@ -37,12 +43,15 @@ function App() {
   }, [countries, selectedCountryId]);
 
   return (
-    <div className="App">
-      <h1>COVID 19 TRACKER</h1>
+    <Container style = {{marginTop: 20}}>
+      <Typography variant="h2" component="h2" >
+        COVID-19 Update In The World
+      </Typography>
+      <Typography> {moment().format('LLL')} </Typography>
       <CountrySelection countries = {countries} handleOnChangeCountry = {handleOnChangeCountry} value = {selectedCountryId} />
       <Highlights report = {report} />
-      <Summary report = {report}/>
-    </div>
+      <Summary countryId={selectedCountryId} report = {report}/>
+    </Container>
   );
 }
 

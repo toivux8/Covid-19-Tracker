@@ -2,10 +2,11 @@ import React, {useEffect, useState} from 'react'
 import HighchartsReact from 'highcharts-react-official'
 import Highchart from 'highcharts'
 import moment from 'moment'
+import { Button, ButtonGroup } from '@material-ui/core'
+
 
 const generateOptions = (data) => {
     const categories = data.map((item) => moment(item.Date).format('DD/MM/YYYY') );
-    console.log(categories);
     return {
         chart: {
             height: 500
@@ -48,16 +49,36 @@ const generateOptions = (data) => {
     };
 };
 
-export default function LineChart({data}) {
+const LineChart = ({data}) => {
 
     const [ options, setOptions ] = useState ({});
+    const [reportType, setReportType] = useState('all');
 
     useEffect(() => {
-        setOptions(generateOptions(data));
-    }, [data]);
+        //Check days track
+        let customData = [];
+        switch (reportType) {
+            case '30':
+                customData = data.slice(data.length - 30);
+                break;
+            case '7':
+                customData = data.slice(data.length - 7);
+                break;
+            default:
+                customData = data;
+                break;
+        }
+
+        setOptions(generateOptions(customData));
+    }, [data, reportType]);
 
     return (
         <div>
+            <ButtonGroup size='small' style={{display: 'flex', justifyContent: 'flex-end'}} > 
+                <Button color = {reportType === 'all' ? 'secondary' : ''} onClick = {() => setReportType('all')} >All days</Button>
+                <Button color = {reportType === '30' ? 'secondary' : ''} onClick = {() => setReportType('30')}>30 days</Button>
+                <Button color = {reportType === '7' ? 'secondary' : ''} onClick = {() => setReportType('7')}>7 days</Button>
+            </ButtonGroup>
             <HighchartsReact 
                 highcharts = {Highchart}
                 options = {options}
@@ -65,3 +86,5 @@ export default function LineChart({data}) {
         </div>
     )
 }
+
+export default React.memo(LineChart);
